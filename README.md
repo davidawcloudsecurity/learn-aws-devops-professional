@@ -6,9 +6,9 @@ how to pass aws devops pro
 ## Phase 1: Foundation Building (Weeks 1-4)
 
 ### Week 1: Infrastructure as Code
--[ ] **Lab 1:** Create a simple AWS CloudFormation template to deploy an EC2 instance and an S3 bucket.
-- **Lab 2:** Use AWS CDK to create a serverless stack with an API Gateway and Lambda.
-- **Focus:** Learn YAML/JSON for CloudFormation and Python/TypeScript for CDK.
+- [ ] **Lab 1:** Create a simple AWS CloudFormation template to deploy an EC2 instance and an S3 bucket.
+- [ ] **Lab 2:** Use AWS CDK to create a serverless stack with an API Gateway and Lambda.
+- [ ] **Focus:** Learn YAML/JSON for CloudFormation and Python/TypeScript for CDK.
 
 ### Week 2: Continuous Integration/Continuous Deployment (CI/CD)
 - **Lab 3:** Set up a basic CI/CD pipeline with AWS CodePipeline, CodeBuild, and CodeDeploy.
