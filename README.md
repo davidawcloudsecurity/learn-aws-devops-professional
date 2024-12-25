@@ -79,5 +79,6 @@ how to pass aws devops pro
 - Allocate time to review AWS best practices and official documentation.
 - Incorporate feedback from practice exams to refine skills.
 
-Good luck!
+### Resource
+- [ ] https://static.packt-cdn.com/downloads/9781801074452_ColorImages.pdf
 
