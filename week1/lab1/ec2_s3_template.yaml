@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to deploy EC2, S3, and IAM role for EC2.
+
+Resources:
+  
+  # Create an IAM role for EC2 to access S3 and use SSM
+  EC2InstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'ec2.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'EC2SSMAndS3Access'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'ssm:SendCommand'
+                  - 'ssm:GetCommandInvocation'
+                  - 'ssm:ListCommands'
+                  - 'ssm:DescribeInstanceInformation'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 's3:GetObject'
+                  - 's3:PutObject'
+                Resource: 'arn:aws:s3:::*/*'
+
+  # Create an EC2 instance
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      ImageId: 'ami-0abcdef1234567890'  # Replace with the latest Amazon Linux AMI ID for your region
+      KeyName: 'your-ssh-key'  # Replace with your SSH key pair name
+      SecurityGroups: 
+        - !Ref EC2SecurityGroup
+      IamInstanceProfile: 
+        Ref: EC2InstanceProfile
+      Tags:
+        - Key: Name
+          Value: EC2InstanceDemo
+
+  # Create an IAM instance profile to attach to the EC2 instance
+  EC2InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Roles:
+        - Ref: EC2InstanceRole
+
+  # Create an Elastic IP (EIP) for the EC2 instance
+  EC2ElasticIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      InstanceId: !Ref EC2Instance
+
+  # Create an S3 bucket with the default settings and "demo" tags
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: S3BucketDemo
+
+  # Define default security group for the EC2 instance allowing SSH access
+  EC2SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: 'Allow SSH access to EC2 instance'
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: '0.0.0.0/0'  # Open SSH to all IPs, adjust if needed
+
+Outputs:
+  EC2InstancePublicIP:
+    Description: 'Public IP of the EC2 instance'
+    Value: !GetAtt EC2ElasticIP.PublicIp
+
+  S3BucketName:
+    Description: 'S3 Bucket Name'
+    Value: !Ref S3Bucket
